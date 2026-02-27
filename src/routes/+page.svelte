@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import { onMount } from "svelte";
 
   let name = $state("");
   let greetMsg = $state("");
@@ -28,8 +29,10 @@
   }
 
   // Effectively a JavaScript main function
-  window.addEventListener("DOMContentLoaded", () => {
+  onMount(() => {
+    console.log("onMount begin ...");
     setup();
+    console.log("onMount ended");
   });
 </script>
 
