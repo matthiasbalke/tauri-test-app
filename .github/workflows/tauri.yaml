@@ -65,8 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          workflowArtifactNamePattern: "[platform]-[arch]-[name]-[version][setup]-[ext]"
-          uploadWorkflowArtifacts: true
+          assetNamePattern: "[platform]-[arch]-[name]-[version][setup]-[ext]"
           args: ${{ matrix.args }}
 
       - name: build and create release candidate
@@ -80,5 +79,5 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-          releaseAssetNamePattern: "[platform]-[arch]-[name]-[version][setup]-[ext]"
+          assetNamePattern: "[platform]-[arch]-[name]-[version][setup]-[ext]"
           args: ${{ matrix.args }}
