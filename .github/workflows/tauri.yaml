@@ -59,7 +59,19 @@ jobs:
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: bun install # change this to npm or pnpm depending on which one you use.
 
-      - uses: tauri-apps/tauri-action@v0
+      - name: build and provide workflow artifacts
+        uses: tauri-apps/tauri-action@v0
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          workflowArtifactNamePattern: "[platform]-[arch]-[name]-[version][setup]-[ext]"
+          uploadWorkflowArtifacts: true
+          args: ${{ matrix.args }}
+
+      - name: build and create release candidate
+        uses: tauri-apps/tauri-action@v0
+        if: ${{ github.ref == 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -68,4 +80,5 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
+          releaseAssetNamePattern: "[platform]-[arch]-[name]-[version][setup]-[ext]"
           args: ${{ matrix.args }}
