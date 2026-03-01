@@ -22,10 +22,13 @@ jobs:
             arch: 'x86_64'
             args: '--target x86_64-apple-darwin'
           - platform: 'ubuntu-22.04'
+            arch: 'amd64'
             args: ''
           - platform: 'ubuntu-22.04-arm' # Only available in public repos.
+            arch: 'arm64'
             args: ''
           - platform: 'windows-latest'
+            arch: 'x64'
             args: ''
 
     runs-on: ${{ matrix.platform }}
@@ -57,6 +60,7 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+          shared-key: ${{ matrix.platform }}-${{ matrix.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
@@ -67,6 +71,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: 'v__VERSION__'
@@ -85,7 +91,7 @@ jobs:
           assetNamePattern: "[platform]-[arch]-[name]-[version][ext]"
           # will be released in 1.0.0
           #uploadWorkflowArtifacts: true
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} --no-sign
 
       - name: Upload macOS bundle artifacts
         uses: actions/upload-artifact@v6
