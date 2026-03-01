@@ -16,8 +16,10 @@ jobs:
       matrix:
         include:
           - platform: 'macos-latest' # for Arm based macs (M1 and above).
+            arch: 'aarch64'
             args: '--target aarch64-apple-darwin'
           - platform: 'macos-latest' # for Intel based macs.
+            arch: 'x86_64'
             args: '--target x86_64-apple-darwin'
           - platform: 'ubuntu-22.04'
             args: ''
@@ -89,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v6
         if: ${{ startsWith(matrix.platform, 'macos') && github.event_name == 'pull_request' }}
         with:
-          name: tauri-bundles-${{ matrix.platform }}
+          name: tauri-bundles-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
             src-tauri/target/**/release/bundle/macos/media-viewer.app.tar.gz
             src-tauri/target/**/release/bundle/macos/media-viewer.app.tar.gz.sig
