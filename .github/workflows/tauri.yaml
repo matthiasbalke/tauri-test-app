@@ -67,6 +67,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: 'v__VERSION__'
@@ -85,7 +87,7 @@ jobs:
           assetNamePattern: "[platform]-[arch]-[name]-[version][ext]"
           # will be released in 1.0.0
           #uploadWorkflowArtifacts: true
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} --no-sign
 
       - name: Upload macOS bundle artifacts
         uses: actions/upload-artifact@v6
